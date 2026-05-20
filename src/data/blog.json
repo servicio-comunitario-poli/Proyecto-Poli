@@ -1,0 +1,22 @@
+{
+  "publicaciones": [
+    {
+      "id": "pub-001",
+      "titulo": "Clasificatorios Nacionales Juveniles 2026",
+      "contenido": "Nuestros atletas de lucha viajan a la capital para buscar su pase a la competencia nacional. Felicitamos a todos los participantes por su desempeño.",
+      "imagenes": [],
+      "categoria": "Competencia",
+      "publicado": true,
+      "creado_en": "2026-04-28T10:00:00Z"
+    },
+    {
+      "id": "pub-002",
+      "titulo": "Resultados de Pruebas Físicas - Nueva Cohorte",
+      "contenido": "Ya están disponibles los resultados de las pruebas físicas realizadas. Los estudiantes aprovados podrán completar su inscripción en el portal.",
+      "imagenes": [],
+      "categoria": "Aviso",
+      "publicado": true,
+      "creado_en": "2026-04-30T14:00:00Z"
+    }
+  ]
+}

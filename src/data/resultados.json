@@ -1,0 +1,22 @@
+{
+  "resultados": [
+    {
+      "id": "res-001",
+      "usuario_id": "est-002",
+      "cedula": "V-23456789",
+      "nombres": "María González",
+      "deporte": "Baloncesto",
+      "aprobado": true,
+      "fecha_prueba": "2026-04-25"
+    },
+    {
+      "id": "res-002",
+      "usuario_id": "est-003",
+      "cedula": "V-34567890",
+      "nombres": "Carlos López",
+      "deporte": "Voleibol",
+      "aprobado": false,
+      "fecha_prueba": "2026-04-25"
+    }
+  ]
+}

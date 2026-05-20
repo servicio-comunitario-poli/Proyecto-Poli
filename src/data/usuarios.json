@@ -1,0 +1,50 @@
+{
+  "usuarios": [
+    {
+      "id": "admin-001",
+      "cedula": "V-12345678",
+      "nombres": "Administrador",
+      "password": "1234",
+      "codigo": "MVG-ADMIN001",
+      "rol": "admin",
+      "tipo": "admin",
+      "creado_en": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "est-001",
+      "cedula": "V-12345678",
+      "nombres": "Juan Pérez",
+      "password": "1234",
+      "codigo": "MVG-10001",
+      "rol": "estudiante",
+      "tipo": "regular",
+      "aprobado_prueba": true,
+      "inscripcion_completa": false,
+      "creado_en": "2025-09-01T00:00:00Z"
+    },
+    {
+      "id": "est-002",
+      "cedula": "V-23456789",
+      "nombres": "María González",
+      "password": "1234",
+      "codigo": "MVG-50001",
+      "rol": "estudiante",
+      "tipo": "preinscrito",
+      "aprobado_prueba": true,
+      "inscripcion_completa": false,
+      "creado_en": "2026-04-15T00:00:00Z"
+    },
+    {
+      "id": "est-003",
+      "cedula": "V-34567890",
+      "nombres": "Carlos López",
+      "password": "1234",
+      "codigo": "MVG-50002",
+      "rol": "estudiante",
+      "tipo": "preinscrito",
+      "aprobado_prueba": false,
+      "inscripcion_completa": false,
+      "creado_en": "2026-04-20T00:00:00Z"
+    }
+  ]
+}
