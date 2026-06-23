@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { supabase } from '../utils/server'; // Importación correcta del cliente Supabase
 
 const PreRegistro = () => {
-    // Estado para cambiar entre el formulario y la pantalla de éxito
     const [registrado, setRegistrado] = useState(false);
     const [codigoAsignado, setCodigoAsignado] = useState('');
-    
-    // Estados independientes para controlar cada modal
     const [showRequisitosModal, setShowRequisitosModal] = useState(false);
     const [showDescargasModal, setShowDescargasModal] = useState(false);
 
-    // Lista de requisitos físicos
+    // NUEVO: Estados para capturar los datos del formulario
+    const [cedula, setCedula] = useState('');
+    const [nombre, setNombre] = useState('');
+    const [password, setPassword] = useState('');
+
     const requisitosFisicos = [
         "Estudiante de 6to. grado (Constancia de estudio original)",
         "Constancia original de niño sano",
@@ -20,9 +22,30 @@ const PreRegistro = () => {
         "Copia certificada de la partida de nacimiento del aspirante"
     ];
 
-    const handleRegistro = (e) => {
+    // MODIFICADO: Función asíncrona para guardar en Supabase
+    const handleRegistro = async (e) => {
         e.preventDefault();
+        
+        // 1. Generar código único
         const codigoSimulado = "MVG-" + Math.floor(10000 + Math.random() * 90000);
+        
+        // 2. Insertar en Supabase
+        const { error } = await supabase
+            .from('usuarios')
+            .insert([{
+                cedula: cedula,
+                nombres: nombre, // Ajustado a tu SQL 'nombres'
+                password: password, // Asegúrate de haber renombrado en DB a 'password'
+                codigo_estudiante: codigoSimulado,
+                rol: 'estudiante'
+            }]);
+
+        if (error) {
+            console.error("Error al registrar:", error.message);
+            alert("Error al registrar en la base de datos: " + error.message);
+            return;
+        }
+
         setCodigoAsignado(codigoSimulado);
         setRegistrado(true);
     };
@@ -37,38 +60,48 @@ const PreRegistro = () => {
 
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="bg-white py-8 px-4 shadow-xl border-t-4 border-rose-900 sm:rounded-2xl sm:px-10">
-
                     {!registrado ? (
-                        /* Formulario de Pre-Registro (Solo Cédula y Nombre) */
                         <form className="space-y-6" onSubmit={handleRegistro}>
                             <div>
                                 <label className="block text-sm font-semibold text-slate-700">Cédula de Identidad</label>
                                 <div className="mt-1 flex rounded-md shadow-sm">
-                                    <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-slate-300 bg-slate-50 text-slate-500 text-sm font-medium">
-                                        V-
-                                    </span>
-                                    <input type="text" required className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md border border-slate-300 focus:ring-rose-900 focus:border-rose-900 sm:text-sm" placeholder="12345678" />
+                                    <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-slate-300 bg-slate-50 text-slate-500 text-sm font-medium">V-</span>
+                                    <input 
+                                        type="text" 
+                                        required 
+                                        value={cedula} 
+                                        onChange={(e) => setCedula(e.target.value)}
+                                        className="flex-1 px-3 py-2 border border-slate-300 rounded-r-md focus:ring-rose-900 focus:border-rose-900 sm:text-sm" 
+                                        placeholder="12345678" 
+                                    />
                                 </div>
                             </div>
-
                             <div>
                                 <label className="block text-sm font-semibold text-slate-700">Nombres y Apellidos</label>
-                                <input type="text" required className="mt-1 appearance-none block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-rose-900 focus:border-rose-900 sm:text-sm" placeholder="Ej. Juan Pérez" />
+                                <input 
+                                    type="text" 
+                                    required 
+                                    value={nombre}
+                                    onChange={(e) => setNombre(e.target.value)}
+                                    className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-rose-900 focus:border-rose-900 sm:text-sm" 
+                                    placeholder="Ej. Juan Pérez" 
+                                />
                             </div>
-
                             <div>
-                                <label className="block text-sm font-semibold text-slate-700">Contraseña para el portal</label>
-                                <input type="password" required className="mt-1 appearance-none block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-rose-900 focus:border-rose-900 sm:text-sm" />
+                                <label className="block text-sm font-semibold text-slate-700">Contraseña</label>
+                                <input 
+                                    type="password" 
+                                    required 
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-rose-900 focus:border-rose-900 sm:text-sm" 
+                                />
                             </div>
-
-                            <div>
-                                <button type="submit" className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-md text-sm font-bold text-white bg-rose-900 hover:bg-rose-800 transition-all duration-200">
-                                    GENERAR CÓDIGO
-                                </button>
-                            </div>
+                            <button type="submit" className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-md text-sm font-bold text-white bg-rose-900 hover:bg-rose-800 transition-all">
+                                GENERAR CÓDIGO
+                            </button>
                         </form>
                     ) : (
-                        /* Pantalla de Éxito con los dos botones únicos abajo */
                         <div className="text-center py-6 animate-fade-in">
                             <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-6">
                                 <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -76,118 +109,44 @@ const PreRegistro = () => {
                                 </svg>
                             </div>
                             <h3 className="text-2xl font-black text-slate-900 mb-2">¡Registro Exitoso!</h3>
-                            <p className="text-slate-500 text-sm mb-6">Guarda este código. Lo necesitarás para iniciar sesión e inscribirte si apruebas la prueba física.</p>
-
+                            <p className="text-slate-500 text-sm mb-6">Guarda este código.</p>
                             <div className="bg-slate-100 p-4 rounded-xl border border-slate-200 mb-6">
-                                <p className="text-sm text-slate-500 uppercase tracking-widest mb-1">Tu Código de Estudiante</p>
+                                <p className="text-sm text-slate-500 uppercase tracking-widest mb-1">Tu Código</p>
                                 <p className="text-3xl font-black text-rose-900 tracking-wider">{codigoAsignado}</p>
                             </div>
-
-                            {/* PANEL DE ACCIONES (Dos botones separados y estéticos) */}
                             <div className="space-y-3 mb-6">
-                                <button 
-                                    type="button" 
-                                    onClick={() => setShowRequisitosModal(true)} 
-                                    className="w-full flex items-center justify-center gap-2 py-3 px-4 border-2 border-dashed border-rose-900 rounded-xl text-sm font-bold text-rose-900 bg-rose-50/40 hover:bg-rose-50 transition-all duration-200"
-                                >
-                                    📋 VER REQUISITOS DE PREINSCRIPCIÓN
-                                </button>
-
-                                <button 
-                                    type="button" 
-                                    onClick={() => setShowDescargasModal(true)} 
-                                    className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-slate-900 hover:bg-slate-800 rounded-xl text-sm font-bold text-white shadow-md transition-all duration-200"
-                                >
-                                    📥 DESCARGAR PLANILLAS EN PDF
-                                </button>
+                                <button onClick={() => setShowRequisitosModal(true)} className="w-full py-3 border-2 border-dashed border-rose-900 rounded-xl text-sm font-bold text-rose-900 bg-rose-50/40">VER REQUISITOS</button>
+                                <button onClick={() => setShowDescargasModal(true)} className="w-full py-3 bg-slate-900 rounded-xl text-sm font-bold text-white">DESCARGAR PLANILLAS</button>
                             </div>
-
-                            <Link to="/" className="w-full flex justify-center py-3 px-4 border-2 border-slate-200 rounded-xl shadow-sm text-sm font-bold text-slate-700 bg-white hover:bg-slate-50 transition-all">
-                                Volver al Inicio
-                            </Link>
+                            <Link to="/" className="w-full flex justify-center py-3 border-2 border-slate-200 rounded-xl text-sm font-bold text-slate-700 bg-white">Volver al Inicio</Link>
                         </div>
                     )}
-
                 </div>
             </div>
 
-            {/* 1. MODAL DE REQUISITOS */}
+            {/* Modal de Requisitos */}
             {showRequisitosModal && (
-                <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-100">
-                        <div className="bg-rose-950 px-6 py-5 text-white">
-                            <h3 className="text-xl font-bold tracking-tight">Requisitos Obligatorios</h3>
-                            <p className="text-sm text-rose-200/80 mt-1">Soportes físicos exigidos que debe consignar en la institución.</p>
+                <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-2xl p-6 max-w-lg w-full">
+                        <h3 className="text-xl font-bold mb-4">Requisitos</h3>
+                        <div className="max-h-60 overflow-y-auto mb-4">
+                            {requisitosFisicos.map((r, i) => <p key={i} className="mb-2">✓ {r}</p>)}
                         </div>
-
-                        <div className="p-6 space-y-5">
-                            <div className="space-y-3 max-h-72 overflow-y-auto pr-1">
-                                {requisitosFisicos.map((item, index) => (
-                                    <div key={index} className="flex items-start p-3.5 bg-gradient-to-r from-slate-50 to-white border border-slate-200 rounded-xl text-base text-slate-700 shadow-sm">
-                                        <span className="text-rose-900 font-bold mr-3 mt-0.5 text-lg">✓</span>
-                                        <span className="font-medium leading-relaxed">{item}</span>
-                                    </div>
-                                ))}
-                            </div>
-
-                            <div className="p-4 bg-amber-50 border border-amber-200/70 text-slate-700 text-sm rounded-xl space-y-2 shadow-sm">
-                                <p className="text-amber-800 font-bold uppercase tracking-wide text-base">⚠️ Información Importante:</p>
-                                <p className="leading-normal font-medium">Esta documentación deberá presentarse en una carpeta física en el departamento de control de estudios.</p>
-                                <div className="text-slate-800 font-semibold text-base">
-                                    <p>📅 Horario: Lunes a Jueves (8:00 AM - 12:00 PM / 1:00 PM - 4:00 PM)</p>
-                                </div>
-                                <p className="font-bold text-rose-950 pt-2 border-t border-amber-200/60 uppercase text-center tracking-wide text-sm">
-                                    El aspirante debe asistir obligatoriamente en ropa deportiva.
-                                </p>
-                            </div>
-
-                            <button onClick={() => setShowRequisitosModal(false)} className="w-full bg-rose-900 hover:bg-rose-800 text-white py-3 rounded-xl font-bold text-base shadow-md transition-all duration-200">
-                                ENTENDIDO
-                            </button>
-                        </div>
+                        <button onClick={() => setShowRequisitosModal(false)} className="w-full bg-rose-900 text-white py-2 rounded-xl">Cerrar</button>
                     </div>
                 </div>
             )}
 
-            {/* 2. MODAL EXCLUSIVO DE DESCARGAS (PDF REAL) */}
+            {/* Modal de Descarga de Planillas */}
             {showDescargasModal && (
-                <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-100">
-                        <div className="bg-slate-900 px-6 py-5 text-white">
-                            <h3 className="text-xl font-bold tracking-tight">Formatos y Planillas Oficiales</h3>
-                            <p className="text-sm text-slate-400 mt-1">Descargue los archivos e imprímalos para su entrega física.</p>
-                        </div>
-
-                        <div className="p-6 space-y-5">
-                            <div className="space-y-3">
-                                {/* Planilla 1 - DESCARGA REAL DEL PDF */}
-                                <a 
-                                    href="/planilla_preinscripcion.pdf" 
-                                    download="Planilla_Preinscripcion_LTDMVG.pdf"
-                                    className="flex items-center justify-between p-4 bg-rose-50/40 hover:bg-rose-50 border border-rose-100 rounded-xl text-base text-rose-950 font-bold shadow-sm transition-all group"
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-2xl">📄</span>
-                                        <span>Planilla de Pre-inscripción</span>
-                                    </div>
-                                    <span className="text-sm bg-rose-900 text-white px-4 py-1.5 rounded-lg group-hover:bg-rose-800 transition-colors shadow-sm">
-                                        Descargar PDF
-                                    </span>
-                                </a>
-                            </div>
-
-                            <div className="p-3 bg-slate-50 rounded-xl text-slate-500 text-xs text-center border border-slate-200">
-                                El documento está en formato **PDF estándar**. Asegúrese de imprimirlo en una hoja tamaño carta de forma nítida.
-                            </div>
-
-                            <button onClick={() => setShowDescargasModal(false)} className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 rounded-xl font-bold text-base shadow-md transition-all duration-200">
-                                CERRAR VENTANA
-                            </button>
-                        </div>
+                <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-2xl p-6 max-w-lg w-full">
+                        <h3 className="text-xl font-bold mb-4">Descargar Planillas</h3>
+                        <p className="text-slate-600 text-sm mb-4">Aquí podrás descargar los formatos necesarios para tu inscripción física.</p>
+                        <button onClick={() => setShowDescargasModal(false)} className="w-full bg-rose-900 text-white py-2 rounded-xl">Cerrar</button>
                     </div>
                 </div>
             )}
-
         </div>
     );
 };

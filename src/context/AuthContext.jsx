@@ -1,7 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useState, useCallback } from 'react';
-import usuariosData from '../data/usuarios.json';
-import resultadosData from '../data/resultados.json';
+import { supabase } from '../utils/server'; // Importamos el cliente centralizado
 
 const STORAGE_KEY = 'polideportivo_user';
 
@@ -19,47 +18,54 @@ export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(getStoredUser);
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const login = useCallback((credencial, password) => {
-    const usuarios = usuariosData.usuarios;
+  // AHORA ES ASYNC PARA PODER HACER EL AWAIT CON SUPABASE
+  const login = useCallback(async (credencial, password, tipoUsuario) => {
+    setLoading(true);
     const credencialTrim = credencial.trim();
 
-    const usuario = usuarios.find(u => 
-      u.cedula === credencialTrim || u.codigo === credencialTrim
-    );
+    // 1. Consultar usuario en Supabase
+    // Ajustamos la columna a buscar según si es admin o estudiante
+    const campoBusqueda = tipoUsuario === 'admin' ? 'cedula' : 'codigo_estudiante';
 
-    if (!usuario) {
+    const { data: usuario, error } = await supabase
+      .from('usuarios')
+      .select('*')
+      .eq(campoBusqueda, credencialTrim)
+      .single();
+
+    if (error || !usuario) {
+      setLoading(false);
       return { success: false, error: 'Usuario no encontrado' };
     }
 
+    // 2. Verificar contraseña (Asegúrate de que el campo en DB se llame password)
     if (usuario.password !== password) {
+      setLoading(false);
       return { success: false, error: 'Contraseña incorrecta' };
     }
 
+    // 3. Lógica de redirección según el rol
     if (usuario.rol === 'admin') {
       const userData = { ...usuario };
       delete userData.password;
       setUser(userData);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+      setLoading(false);
       return { success: true, redirect: '/admin', rol: 'admin' };
     }
 
-    const resultados = resultadosData.resultados;
-    const resultadoAprobado = resultados.find(r => 
-      r.usuario_id === usuario.id && r.aprobado === true
-    );
-
-    const userData = { 
-      ...usuario,
-      resultado_aprobado: !!resultadoAprobado
-    };
+    // Lógica para estudiantes (revisar inscripciones si es necesario)
+    const userData = { ...usuario };
     delete userData.password;
 
     setUser(userData);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+    setLoading(false);
 
-    if (resultadoAprobado && !usuario.inscripcion_completa) {
+    // Aquí podrías agregar lógica para verificar si ya completó inscripción
+    if (!usuario.inscripcion_completa) {
       return { success: true, redirect: '/inscripcion', rol: 'estudiante' };
     }
 
@@ -71,16 +77,13 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem(STORAGE_KEY);
   }, []);
 
-  const isAdmin = user?.rol === 'admin';
-  const isAuthenticated = !!user;
-
   const value = {
     user,
     loading,
     login,
     logout,
-    isAdmin,
-    isAuthenticated
+    isAdmin: user?.rol === 'admin',
+    isAuthenticated: !!user
   };
 
   return (

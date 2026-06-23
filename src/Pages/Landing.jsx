@@ -73,7 +73,7 @@ const Landing = () => {
             descripcion: 'Levantamiento olímpico de pesas centrado en las modalidades de Arranque (Snatch) y Envión (Clean & Jerk) para maximizar la potencia y fuerza explosiva.'
         },
         'Lucha': {
-            emoji: '🤼‍♂️',
+            emoji: '🼽',
             imagen: '/images/lucha.png',
             descripcion: 'Estilo Libre y Grecorromana. Trabajo intensivo en derribos, tackles, control de agarres y destreza en lona para competiciones oficiales.'
         },
@@ -85,7 +85,7 @@ const Landing = () => {
         'Tenis de Mesa': {
             emoji: '🏓',
             imagen: '/images/tenisdemesa.png',
-            descripcion: 'Desarrollo de velocidad de reacción ultrarrápida, efectos de bola (spin), coordinación óculo-manual y agilidad mental en distancias corta.'
+            descripcion: 'Desarrollo de velocidad de reacción ultrarrápida, efectos de bola (spin), coordinación óculo-manual y agilidad mental en distancias cortas.'
         },
         'Voleibol': {
             emoji: '🏐',
@@ -173,7 +173,7 @@ const Landing = () => {
                 </div>
             </section>
 
-            {/* SECCIÓN INTERMEDIA: MISIÓN Y VISIÓN (DISEÑO PREMIUM INTERACTIVO) */}
+            {/* SECCIÓN INTERMEDIA: MISIÓN Y VISIÓN */}
             <section className="relative bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 py-24 text-white overflow-hidden">
                 <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] mix-blend-overlay"></div>
                 
@@ -195,7 +195,7 @@ const Landing = () => {
                         </p>
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-8 items-stretch max-w-4xl mx-auto relative z-10">
+                    <div className="grid md:grid-cols-2 gap-8 items-stretch max-w-5xl mx-auto relative z-10">
                         
                         {/* Botón de Misión */}
                         <button 
@@ -203,7 +203,7 @@ const Landing = () => {
                                 titulo: 'Misión',
                                 emoji: '🧭',
                                 imagen: '/images/mision.png', 
-                                contenido: 'Inicia, desarrollar y consolida estudiantes/atletas con condiciones especiales hacia el deporte cursantes de educación media general y técnica en disciplinas deportivas prioritarias para la nación, formando de manera simultánea un atleta de alta competencia con un alto level académico.'
+                                contenido: 'Iniciar, desarrollar y consolidar estudiantes/atletas con condiciones especiales hacia el deporte cursantes de educación media general y técnica en disciplinas deportivas prioritarias para la nación, formando de manera simultánea un atleta de alta competencia con un alto nivel académico.'
                             })}
                             className="bg-slate-900/40 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden flex flex-col shadow-2xl text-left w-full transition-all duration-300 hover:-translate-y-1 hover:border-rose-500/40 hover:shadow-[0_0_30px_rgba(244,63,94,0.15)] group focus:outline-none focus:ring-2 focus:ring-rose-500 cursor-pointer"
                         >
@@ -214,9 +214,9 @@ const Landing = () => {
                                 </span>
                                 <span className="text-2xl w-10 text-right group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">🧭</span>
                             </div>
-                            <div className="p-8 flex-grow flex flex-col items-center justify-center w-full min-h-[140px] bg-gradient-to-b from-transparent to-slate-950/20 relative overflow-hidden">
+                            <div className="p-8 flex-grow flex flex-col items-center justify-center w-full min-h-[180px] md:min-h-[220px] bg-gradient-to-b from-transparent to-slate-950/20 relative overflow-hidden">
                                 <div className="absolute inset-0 bg-rose-500/0 group-hover:bg-rose-500/[0.02] transition-colors duration-300"></div>
-                                <p className="text-slate-400 text-xs md:text-sm font-bold uppercase tracking-widest text-center px-4 py-2.5 rounded-xl border border-white/5 bg-slate-950/40 group-hover:text-white group-hover:border-rose-500/30 group-hover:bg-rose-950/80 transition-all duration-300 shadow-inner">
+                                <p className="text-slate-400 text-xs md:text-sm font-bold uppercase tracking-widest text-center px-6 py-3.5 rounded-xl border border-white/5 bg-slate-950/40 group-hover:text-white group-hover:border-rose-500/30 group-hover:bg-rose-950/80 transition-all duration-300 shadow-inner">
                                     Explorar Filosofía <span className="text-rose-500 ml-1 group-hover:translate-x-1 inline-block transition-transform">→</span>
                                 </p>
                             </div>
@@ -239,9 +239,9 @@ const Landing = () => {
                                 </span>
                                 <span className="text-2xl w-10 text-right group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">🏅</span>
                             </div>
-                            <div className="p-8 flex-grow flex flex-col items-center justify-center w-full min-h-[140px] bg-gradient-to-b from-transparent to-slate-950/20 relative overflow-hidden">
+                            <div className="p-8 flex-grow flex flex-col items-center justify-center w-full min-h-[180px] md:min-h-[220px] bg-gradient-to-b from-transparent to-slate-950/20 relative overflow-hidden">
                                 <div className="absolute inset-0 bg-rose-500/0 group-hover:bg-rose-500/[0.02] transition-colors duration-300"></div>
-                                <p className="text-slate-400 text-xs md:text-sm font-bold uppercase tracking-widest text-center px-4 py-2.5 rounded-xl border border-white/5 bg-slate-950/40 group-hover:text-white group-hover:border-rose-500/30 group-hover:bg-rose-950/80 transition-all duration-300 shadow-inner">
+                                <p className="text-slate-400 text-xs md:text-sm font-bold uppercase tracking-widest text-center px-6 py-3.5 rounded-xl border border-white/5 bg-slate-950/40 group-hover:text-white group-hover:border-rose-500/30 group-hover:bg-rose-950/80 transition-all duration-300 shadow-inner">
                                     Ver Proyección <span className="text-rose-500 ml-1 group-hover:translate-x-1 inline-block transition-transform">→</span>
                                 </p>
                             </div>
@@ -273,7 +273,7 @@ const Landing = () => {
 
             <Footer />
 
-            {/* MODAL DE DEPORTES (DISEÑO PREMIUM MEJORADO) */}
+            {/* MODAL DE DEPORTES */}
             <div 
                 className={`fixed inset-0 bg-slate-950/80 backdrop-blur-xl flex items-center justify-center p-4 z-50 transition-all duration-300 ease-out ${
                     deporteSeleccionado ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
@@ -287,7 +287,6 @@ const Landing = () => {
                     onClick={(e) => e.stopPropagation()}
                 >
                     
-                    {/* COLUMNA IZQUIERDA: CONTENEDOR DE LA IMAGEN */}
                     <div className="relative h-56 md:h-full bg-slate-950 overflow-hidden group">
                         {deporteSeleccionado?.imagen ? (
                             <img 
@@ -306,7 +305,6 @@ const Landing = () => {
                         </div>
                     </div>
 
-                    {/* COLUMNA DERECHA: CONTENIDO INFORMATIVO */}
                     <div className="flex flex-col justify-between p-6 md:p-8 bg-gradient-to-b from-transparent to-slate-950/40 relative">
                         <div>
                             <span className="text-xs text-rose-500 font-black uppercase tracking-widest block mb-1">
@@ -339,7 +337,7 @@ const Landing = () => {
                 </div>
             </div>
 
-            {/* MODAL ESPECÍFICO PARA MISIÓN Y VISIÓN (CON COLUMNA DE IMAGEN A LA IZQUIERDA) */}
+            {/* MODAL MODIFICADO: MÁS GRANDE (max-w-4xl) Y ALTURA REDISEÑADA (md:h-[520px]) */}
             <div 
                 className={`fixed inset-0 bg-slate-950/85 backdrop-blur-xl flex items-center justify-center p-4 z-50 transition-all duration-300 ease-out ${
                     identidadSeleccionada ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
@@ -347,7 +345,7 @@ const Landing = () => {
                 onClick={() => setIdentidadSeleccionada(null)}
             >
                 <div 
-                    className={`bg-slate-900 border border-white/10 text-white rounded-3xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.6)] w-full max-w-2xl overflow-hidden transform transition-all duration-300 ease-out grid md:grid-cols-2 ${
+                    className={`bg-slate-900 border border-white/10 text-white rounded-3xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.6)] w-full max-w-4xl overflow-hidden transform transition-all duration-300 ease-out grid md:grid-cols-2 md:h-[520px] ${
                         identidadSeleccionada ? 'scale-100 translate-y-0 opacity-100' : 'scale-95 translate-y-4 opacity-0'
                     }`}
                     onClick={(e) => e.stopPropagation()}
@@ -366,33 +364,34 @@ const Landing = () => {
                         ) : null}
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-slate-900/80" />
                         
-                        <div className="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-md w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shadow-xl border border-white/10">
+                        <div className="absolute top-6 left-6 bg-slate-900/80 backdrop-blur-md w-16 h-16 rounded-2xl flex items-center justify-center text-4xl shadow-xl border border-white/10">
                             {identidadSeleccionada?.emoji}
                         </div>
                     </div>
 
-                    {/* COLUMNA DERECHA: CONTENIDO INFORMATIVO */}
-                    <div className="flex flex-col justify-between p-8 md:p-10 bg-gradient-to-b from-transparent to-slate-950/30 relative">
-                        <div>
+                    {/* COLUMNA DERECHA: SECCIÓN DE TEXTO EXPANDIDA */}
+                    <div className="flex flex-col justify-between p-10 md:p-12 bg-gradient-to-b from-transparent to-slate-950/30 relative h-full overflow-hidden">
+                        <div className="flex flex-col overflow-hidden flex-grow">
                             <span className="text-xs text-rose-500 font-black uppercase tracking-widest block mb-1">
                                 Identidad Institucional
                             </span>
-                            <h3 className="text-3xl font-black uppercase tracking-tight text-white mb-6 bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+                            <h3 className="text-4xl font-black uppercase tracking-tight text-white mb-6 bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
                                 {identidadSeleccionada?.titulo}
                             </h3>
                             
-                            <div className="bg-white/[0.02] backdrop-blur-sm border border-white/5 p-6 rounded-2xl mb-8 shadow-inner relative overflow-hidden">
-                                <div className="absolute top-0 left-0 w-2 h-2 bg-rose-500 rounded-br-lg opacity-40"></div>
-                                <p className="text-slate-200 text-sm md:text-base leading-relaxed font-medium text-center balance">
+                            {/* Caja de contenido interno con scroll y padding adaptado al nuevo tamaño */}
+                            <div className="bg-white/[0.02] backdrop-blur-sm border border-white/5 p-6 md:p-8 rounded-2xl mb-6 shadow-inner relative overflow-hidden flex-grow overflow-y-auto">
+                                <div className="absolute top-0 left-0 w-3 h-3 bg-rose-500 rounded-br-xl opacity-40"></div>
+                                <p className="text-slate-200 text-base md:text-lg leading-relaxed font-medium text-left balance">
                                     {identidadSeleccionada?.contenido}
                                 </p>
                             </div>
                         </div>
 
-                        {/* Botón de Cierre Elegante */}
+                        {/* Botón de Cierre */}
                         <button 
                             onClick={() => setIdentidadSeleccionada(null)} 
-                            className="w-full bg-gradient-to-r from-rose-900 to-rose-800 hover:from-rose-600 hover:to-rose-700 text-white py-3.5 rounded-xl font-black text-xs tracking-widest shadow-lg shadow-rose-950/50 transition-all duration-300 uppercase border border-rose-500/20 hover:border-rose-400/30 cursor-pointer"
+                            className="w-full bg-gradient-to-r from-rose-900 to-rose-800 hover:from-rose-600 hover:to-rose-700 text-white py-4 rounded-xl font-black text-sm tracking-widest shadow-lg shadow-rose-950/50 transition-all duration-300 uppercase border border-rose-500/20 hover:border-rose-400/30 cursor-pointer mt-auto"
                         >
                             Cerrar Ventana
                         </button>
