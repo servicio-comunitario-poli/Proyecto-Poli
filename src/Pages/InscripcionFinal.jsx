@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase } from '../utils/server'; // Importación correcta
+import { supabase } from '../utils/server';
 
 const InscripcionFinal = () => {
     const [fase, setFase] = useState(1);
@@ -8,11 +8,11 @@ const InscripcionFinal = () => {
     const [errorCodigo, setErrorCodigo] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // Estado con los nombres exactos de las columnas de tu tabla 'inscripciones'
+    // Estado con todos los campos presentes en tu tabla 'inscripciones'
     const [formData, setFormData] = useState({
         cedula: '', nombres: '', apellidos: '', fecha_nacimiento: '',
         genero: '', direccion: '', disciplina: '', anio_cursar: '',
-        cedula_representante: '', nombre_representante: '', telefono_representante: '', fecha_inscripcion: ''
+        cedula_representante: '', nombre_representante: '', telefono_representante: ''
     });
 
     const disciplinas = [
@@ -20,8 +20,6 @@ const InscripcionFinal = () => {
         "Ciclismo", "Esgrima", "Gimnasia", "Judo", "Karate Do", 
         "Kenpo", "LVD-Pesas", "Lucha", "Tae Kwon Do", "Tenis de Mesa", "Voleibol"
     ];
-
-    // --- MANEJADORES CONECTADOS A SUPABASE ---
 
     const handleValidarCodigo = async (e) => {
         e.preventDefault();
@@ -55,15 +53,14 @@ const InscripcionFinal = () => {
         e.preventDefault();
         setLoading(true);
         
-        // Construcción explícita: SOLO lo que existe en la tabla
+        // Construcción del objeto con todos los datos
         const payload = {
             codigo_estudiante: codigo,
             cedula_alumno: formData.cedula,
             nombres: formData.nombres,
             apellidos: formData.apellidos,
-            // Double safety: Si por alguna razón está vacío, enviamos null en vez de "" para que Postgres no falle
-            fecha_nacimiento: formData.fecha_nacimiento || null, 
-            genero: formData.genero,
+            fecha_nacimiento: formData.fecha_nacimiento,
+            genero: formData.genero, // Ahora este dato viene del formulario
             direccion: formData.direccion,
             anio_cursar: formData.anio_cursar,
             disciplina: formData.disciplina,
@@ -76,97 +73,82 @@ const InscripcionFinal = () => {
         try {
             const { error } = await supabase
                 .from('inscripciones')
-                .insert([payload]); // Enviamos el objeto limpio
+                .insert([payload]);
 
             if (error) throw error;
             setFase(3);
         } catch (err) {
             console.error("Error completo:", err);
-            alert("Error: " + err.message);
+            alert("Error al procesar: " + err.message);
         } finally {
             setLoading(false);
         }
     };
 
-    // --- RENDERIZADO (DISEÑO FINO MANTENIDO) ---
     return (
-        <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 md:p-6 font-sans text-slate-900 relative overflow-hidden py-12">
-            <div className="absolute top-0 w-full h-[40vh] bg-[#0f172a] rounded-b-[50px] md:rounded-b-[100px] shadow-lg"></div>
-
-            <div className={`w-full bg-white rounded-2xl shadow-2xl overflow-hidden relative z-10 border border-slate-200 transition-all duration-500 ease-in-out ${fase === 2 ? 'max-w-4xl' : 'max-w-md'}`}>
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+            <div className={`w-full bg-white rounded-2xl shadow-2xl p-8 transition-all ${fase === 2 ? 'max-w-4xl' : 'max-w-md'}`}>
                 
                 {/* FASE 1: VALIDACIÓN */}
                 {fase === 1 && (
-                    <div className="animate-fade-in">
-                        <div className="p-8 pb-6 text-center border-b border-slate-100">
-                            <h2 className="text-2xl font-black uppercase tracking-tight text-[#0f172a]">Validar <span className="text-[#8e1638]">Código</span></h2>
-                        </div>
-                        <div className="p-8 bg-slate-50/50">
-                            <form onSubmit={handleValidarCodigo} className="space-y-6">
-                                <input
-                                    type="text"
-                                    value={codigo}
-                                    onChange={(e) => setCodigo(e.target.value.toUpperCase())}
-                                    placeholder="EJ: MVG-12345"
-                                    className="w-full px-5 py-4 rounded-xl border-2 border-slate-200 focus:border-[#8e1638] text-center font-mono text-lg uppercase font-bold shadow-inner"
-                                    required
-                                />
-                                {errorCodigo && <p className="text-red-500 text-xs font-bold text-center">{errorCodigo}</p>}
-                                <button type="submit" disabled={loading} className="w-full bg-[#8e1638] text-white py-4 rounded-xl font-black uppercase hover:bg-[#6b102a] transition-all">
-                                    {loading ? "Verificando..." : "Verificar y Continuar"}
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+                    <form onSubmit={handleValidarCodigo} className="space-y-4">
+                        <h2 className="text-2xl font-black text-center">Validar Código</h2>
+                        <input type="text" value={codigo} onChange={(e) => setCodigo(e.target.value.toUpperCase())} placeholder="EJ: MVG-12345" className="w-full p-4 border rounded-xl" required />
+                        {errorCodigo && <p className="text-red-500 text-center font-bold">{errorCodigo}</p>}
+                        <button type="submit" disabled={loading} className="w-full bg-[#8e1638] text-white py-4 rounded-xl font-bold">Continuar</button>
+                    </form>
                 )}
 
-                {/* FASE 2: FORMULARIO */}
+                {/* FASE 2: FORMULARIO COMPLETO */}
                 {fase === 2 && (
-                    <div className="animate-fade-in p-8">
-                        <h2 className="text-2xl font-black mb-6">Formalizar Inscripción</h2>
-                        <form onSubmit={handleFinalizarInscripcion} className="space-y-4">
-                            
-                            {/* Datos Básicos */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <input name="cedula" placeholder="Cédula" onChange={handleInputChange} required className="p-3 border rounded-lg" />
-                                <input name="nombres" placeholder="Nombres" onChange={handleInputChange} required className="p-3 border rounded-lg" />
-                                <input name="apellidos" placeholder="Apellidos" onChange={handleInputChange} required className="p-3 border rounded-lg" />
-                            </div>
+                    <form onSubmit={handleFinalizarInscripcion} className="space-y-4">
+                        <h2 className="text-2xl font-black mb-4">Formalizar Inscripción</h2>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <input name="cedula" placeholder="Cédula Alumno" onChange={handleInputChange} required className="p-3 border rounded" />
+                            <input name="nombres" placeholder="Nombres" onChange={handleInputChange} required className="p-3 border rounded" />
+                            <input name="apellidos" placeholder="Apellidos" onChange={handleInputChange} required className="p-3 border rounded" />
+                        </div>
 
-                            {/* NUEVO CAMPO: Fecha de Nacimiento */}
-                            <div className="flex flex-col gap-1">
-                                <label className="text-xs font-bold text-slate-500 uppercase px-1">Fecha de Nacimiento</label>
-                                <input 
-                                    type="date" 
-                                    name="fecha_nacimiento" 
-                                    onChange={handleInputChange} 
-                                    required 
-                                    className="w-full p-3 border rounded-lg text-slate-600 focus:outline-none focus:border-[#8e1638]" 
-                                />
-                            </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input type="date" name="fecha_nacimiento" onChange={handleInputChange} required className="p-3 border rounded" />
+                            <select name="genero" onChange={handleInputChange} required className="p-3 border rounded">
+                                <option value="">Seleccione Género...</option>
+                                <option value="M">Masculino</option>
+                                <option value="F">Femenino</option>
+                            </select>
+                        </div>
 
-                            {/* Selección de Año Académico */}
-                            <select name="anio_cursar" onChange={handleInputChange} required className="w-full p-3 border rounded-lg">
-                                <option value="">Seleccione Año...</option>
+                        <input name="direccion" placeholder="Dirección de Habitación" onChange={handleInputChange} required className="w-full p-3 border rounded" />
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <select name="anio_cursar" onChange={handleInputChange} required className="p-3 border rounded">
+                                <option value="">Año a cursar...</option>
                                 {['1er Año', '2do Año', '3er Año', '4to Año', '5to Año'].map(a => <option key={a} value={a}>{a}</option>)}
                             </select>
-
-                            {/* Selección de Disciplina */}
-                            <select name="disciplina" onChange={handleInputChange} required className="w-full p-3 border rounded-lg">
-                                <option value="">Seleccione Disciplina...</option>
+                            <select name="disciplina" onChange={handleInputChange} required className="p-3 border rounded">
+                                <option value="">Disciplina...</option>
                                 {disciplinas.map(d => <option key={d} value={d}>{d}</option>)}
                             </select>
+                        </div>
 
-                            <button type="submit" className="w-full bg-[#8e1638] text-white py-4 rounded-xl font-black uppercase hover:bg-[#6b102a] transition-all">Procesar Inscripción</button>
-                        </form>
-                    </div>
+                        {/* DATOS REPRESENTANTE */}
+                        <h3 className="font-bold border-b mt-4">Datos del Representante</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <input name="cedula_representante" placeholder="Cédula Rep." onChange={handleInputChange} required className="p-3 border rounded" />
+                            <input name="nombre_representante" placeholder="Nombre Completo" onChange={handleInputChange} required className="p-3 border rounded" />
+                            <input name="telefono_representante" placeholder="Teléfono" onChange={handleInputChange} required className="p-3 border rounded" />
+                        </div>
+
+                        <button type="submit" className="w-full bg-[#8e1638] text-white py-4 rounded-xl font-bold mt-4">Procesar Inscripción</button>
+                    </form>
                 )}
 
                 {/* FASE 3: ÉXITO */}
                 {fase === 3 && (
-                    <div className="animate-fade-in p-10 text-center">
-                        <h2 className="text-3xl font-black mb-4">¡Inscripción Exitosa!</h2>
-                        <Link to="/login" className="block w-full bg-[#0f172a] text-white py-4 rounded-xl font-black">Ir a Iniciar Sesión</Link>
+                    <div className="text-center">
+                        <h2 className="text-3xl font-black">¡Inscripción Exitosa!</h2>
+                        <Link to="/login" className="block mt-4 text-[#8e1638] underline">Ir a Login</Link>
                     </div>
                 )}
             </div>

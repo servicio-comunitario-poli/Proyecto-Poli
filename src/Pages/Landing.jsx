@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';    
 import Footer from '../Components/Footer';
+import { supabase } from '../utils/server'; 
 
 const Landing = () => {
     // Estado para controlar qué deporte está seleccionado en el modal
@@ -9,8 +10,38 @@ const Landing = () => {
     // Estado para controlar el modal de Misión y Visión
     const [identidadSeleccionada, setIdentidadSeleccionada] = useState(null);
 
-    // 1. CONFIGURA AQUÍ LAS RUTAS DE TUS IMÁGENES
-    // Puedes usar imágenes locales (ej. '/assets/boxeo.jpg') o URLs completas
+    // Estado para controlar el Sidebar de Requisitos
+    const [showRequisitosSidebar, setShowRequisitosSidebar] = useState(false);
+
+    // Estado para almacenar las publicaciones traídas desde el AdminPanel
+    const [publicaciones, setPublicaciones] = useState([]);
+
+    // Efecto para cargar los blogs de forma dinámica al montar el componente
+    useEffect(() => {
+        const obtenerPublicaciones = async () => {
+            const { data, error } = await supabase
+                .from('publicaciones_blog')
+                .select('*')
+                .order('creado_en', { ascending: false })
+                .limit(3); 
+            
+            if (!error && data) {
+                setPublicaciones(data);
+            }
+        };
+        obtenerPublicaciones();
+    }, []);
+
+    // Arreglo de requisitos
+    const requisitosFisicos = [
+        "Estudiante de 6to. grado (Constancia de estudio original)",
+        "Constancia original de niño sano",
+        "Planilla de pre-inscripción impresa (L.T.D.M.V.G)",
+        "Foto tipo carnet reciente del aspirante y del representante",
+        "Copia fotostática de la cédula del aspirante y del representante",
+        "Copia certificada de la partida de nacimiento del aspirante"
+    ];
+
     const infoDeportes = {
         'Ajedrez': {
             emoji: '♟️',
@@ -114,11 +145,20 @@ const Landing = () => {
 
             {/* Sección de Accesos */}
             <section className="max-w-7xl mx-auto px-6 -mt-12 relative z-10 grid md:grid-cols-3 gap-6">
+                
                 {/* 1. Preinscripción */}
-                <div className="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-rose-900 flex flex-col justify-between">
+                <div className="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-rose-900 flex flex-col justify-between relative overflow-hidden">
                     <div>
                         <h3 className="text-xl font-bold mb-2">1. Preinscripción</h3>
-                        <p className="text-slate-500 mb-6 text-sm">Nuevo ingreso. Inicia tu proceso para obtener el código y presentar la prueba física.</p>
+                        <p className="text-slate-500 mb-4 text-sm">Nuevo ingreso. Inicia tu proceso para obtener el código y presentar la prueba física.</p>
+                        
+                        {/* Botón para abrir el Sidebar */}
+                        <button 
+                            onClick={() => setShowRequisitosSidebar(true)} 
+                            className="text-rose-700 text-xs font-black uppercase tracking-widest hover:text-rose-900 mb-6 flex items-center gap-1 transition-colors group"
+                        >
+                            Ver Requisitos <span className="group-hover:translate-x-1 transition-transform">→</span>
+                        </button>
                     </div>
                     <Link to="/pre-registro" className="block text-center w-full bg-rose-900 text-white py-3 rounded-xl font-bold hover:bg-rose-800 transition">
                         SOLICITAR CUPO
@@ -259,19 +299,106 @@ const Landing = () => {
                         <button className="text-rose-900 font-bold">Ver Calendario →</button>
                     </div>
                     <div className="grid md:grid-cols-3 gap-8">
-                        <article className="bg-white rounded-2xl overflow-hidden shadow-md">
-                            <div className="h-40 bg-slate-400"></div>
-                            <div className="p-6">
-                                <span className="text-rose-900 font-bold text-xs uppercase">Competencia</span>
-                                <h4 className="font-bold text-lg mt-2 leading-tight">Clasificatorios Nacionales Juveniles 2026</h4>
-                                <p className="text-slate-500 text-sm mt-3">Nuestros atletas de lucha viajan a la capital para buscar su pase...</p>
-                            </div>
-                        </article>
+                        {/* Renderizado dinámico de las publicaciones cargadas desde Supabase */}
+                        {publicaciones.length > 0 ? (
+                            publicaciones.map((pub) => (
+                                <article key={pub.id} className="bg-white rounded-2xl overflow-hidden shadow-md">
+                                    <div className="h-40 bg-slate-400"></div>
+                                    <div className="p-6">
+                                        <span className="text-rose-900 font-bold text-xs uppercase">{pub.categoria}</span>
+                                        <h4 className="font-bold text-lg mt-2 leading-tight">{pub.titulo}</h4>
+                                        <p className="text-slate-500 text-sm mt-3">{pub.contenido}</p>
+                                    </div>
+                                </article>
+                            ))
+                        ) : (
+                            /* Código de respaldo intacto: se muestra solo si la base de datos no tiene publicaciones */
+                            <article className="bg-white rounded-2xl overflow-hidden shadow-md">
+                                <div className="h-40 bg-slate-400"></div>
+                                <div className="p-6">
+                                    <span className="text-rose-900 font-bold text-xs uppercase">Competencia</span>
+                                    <h4 className="font-bold text-lg mt-2 leading-tight">Clasificatorios Nacionales Juveniles 2026</h4>
+                                    <p className="text-slate-500 text-sm mt-3">Nuestros atletas de lucha viajan a la capital para buscar su pase...</p>
+                                </div>
+                            </article>
+                        )}
                     </div>
                 </div>
             </section>
 
             <Footer />
+
+            {/* ============================================== */}
+            {/* SIDEBAR LATERAL DE REQUISITOS + DESCARGA       */}
+            {/* ============================================== */}
+            <div className={`fixed inset-0 z-[60] transition-opacity duration-300 ${showRequisitosSidebar ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                
+                {/* Overlay Oscuro que cierra al hacer clic */}
+                <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" onClick={() => setShowRequisitosSidebar(false)}></div>
+                
+                {/* Panel Lateral que se desliza */}
+                <div className={`absolute inset-y-0 right-0 w-full max-w-md bg-slate-50 shadow-2xl transform transition-transform duration-300 ease-in-out flex flex-col border-l border-slate-200 ${showRequisitosSidebar ? 'translate-x-0' : 'translate-x-full'}`}>
+                    
+                    {/* Header del Sidebar */}
+                    <div className="px-6 py-5 bg-[#0f172a] text-white flex justify-between items-center border-b border-white/10">
+                        <div>
+                            <span className="text-rose-500 text-xs font-black uppercase tracking-widest">Información Oficial</span>
+                            <h3 className="text-xl font-black uppercase tracking-tight mt-1">Requisitos</h3>
+                        </div>
+                        <button 
+                            onClick={() => setShowRequisitosSidebar(false)} 
+                            className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-rose-500 hover:text-white transition-colors"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+
+                    {/* Contenido (Scrollable) */}
+                    <div className="p-6 overflow-y-auto flex-grow relative">
+                        <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center text-rose-600 mb-6 mx-auto">
+                            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        </div>
+                        
+                        <p className="text-slate-600 text-sm text-center mb-6 font-medium">
+                            Asegúrate de contar con los siguientes documentos para formalizar tu proceso de admisión:
+                        </p>
+                        
+                        <ul className="space-y-3 mb-8">
+                            {requisitosFisicos.map((requisito, index) => (
+                                <li key={index} className="flex items-start gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                                    <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                        <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>
+                                    </div>
+                                    <span className="text-slate-700 text-sm font-bold leading-snug">{requisito}</span>
+                                </li>
+                            ))}
+                        </ul>
+
+                        {/* BOTÓN DE DESCARGA DE PLANILLA */}
+                        <div className="mt-4 border-t border-slate-200 pt-6">
+                            <h4 className="text-center text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Descargas disponibles</h4>
+                            <a 
+                                href="/public/images/planilla_preinscripcion.pdf" 
+                                download="planilla_preinscripcion.pdf"
+                                className="w-full flex items-center justify-center gap-2 bg-rose-50 text-rose-800 border-2 border-rose-200 py-3.5 rounded-xl font-bold hover:bg-rose-100 hover:border-rose-300 transition-colors shadow-sm"
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                DESCARGAR PLANILLA
+                            </a>
+                        </div>
+                    </div>
+
+                    {/* Footer del Sidebar */}
+                    <div className="p-6 border-t border-slate-200 bg-white">
+                        <button 
+                            onClick={() => setShowRequisitosSidebar(false)} 
+                            className="w-full bg-[#8e1638] text-white py-4 rounded-xl font-black uppercase text-sm tracking-widest shadow-lg shadow-rose-900/30 hover:bg-[#6b102a] transition-colors"
+                        >
+                            Entendido
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             {/* MODAL DE DEPORTES */}
             <div 
@@ -337,7 +464,7 @@ const Landing = () => {
                 </div>
             </div>
 
-            {/* MODAL MODIFICADO: MÁS GRANDE (max-w-4xl) Y ALTURA REDISEÑADA (md:h-[520px]) */}
+            {/* MODAL MISION/VISION */}
             <div 
                 className={`fixed inset-0 bg-slate-950/85 backdrop-blur-xl flex items-center justify-center p-4 z-50 transition-all duration-300 ease-out ${
                     identidadSeleccionada ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
@@ -350,7 +477,6 @@ const Landing = () => {
                     }`}
                     onClick={(e) => e.stopPropagation()}
                 >
-                    {/* COLUMNA IZQUIERDA: CONTENEDOR DE LA IMAGEN DE IDENTIDAD */}
                     <div className="relative h-56 md:h-full bg-slate-950 overflow-hidden group">
                         {identidadSeleccionada?.imagen ? (
                             <img 
@@ -369,7 +495,6 @@ const Landing = () => {
                         </div>
                     </div>
 
-                    {/* COLUMNA DERECHA: SECCIÓN DE TEXTO EXPANDIDA */}
                     <div className="flex flex-col justify-between p-10 md:p-12 bg-gradient-to-b from-transparent to-slate-950/30 relative h-full overflow-hidden">
                         <div className="flex flex-col overflow-hidden flex-grow">
                             <span className="text-xs text-rose-500 font-black uppercase tracking-widest block mb-1">
@@ -379,7 +504,6 @@ const Landing = () => {
                                 {identidadSeleccionada?.titulo}
                             </h3>
                             
-                            {/* Caja de contenido interno con scroll y padding adaptado al nuevo tamaño */}
                             <div className="bg-white/[0.02] backdrop-blur-sm border border-white/5 p-6 md:p-8 rounded-2xl mb-6 shadow-inner relative overflow-hidden flex-grow overflow-y-auto">
                                 <div className="absolute top-0 left-0 w-3 h-3 bg-rose-500 rounded-br-xl opacity-40"></div>
                                 <p className="text-slate-200 text-base md:text-lg leading-relaxed font-medium text-left balance">
@@ -388,7 +512,6 @@ const Landing = () => {
                             </div>
                         </div>
 
-                        {/* Botón de Cierre */}
                         <button 
                             onClick={() => setIdentidadSeleccionada(null)} 
                             className="w-full bg-gradient-to-r from-rose-900 to-rose-800 hover:from-rose-600 hover:to-rose-700 text-white py-4 rounded-xl font-black text-sm tracking-widest shadow-lg shadow-rose-950/50 transition-all duration-300 uppercase border border-rose-500/20 hover:border-rose-400/30 cursor-pointer mt-auto"

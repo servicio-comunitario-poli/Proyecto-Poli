@@ -115,8 +115,6 @@ const PreRegistro = () => {
                                 <p className="text-3xl font-black text-rose-900 tracking-wider">{codigoAsignado}</p>
                             </div>
                             <div className="space-y-3 mb-6">
-                                <button onClick={() => setShowRequisitosModal(true)} className="w-full py-3 border-2 border-dashed border-rose-900 rounded-xl text-sm font-bold text-rose-900 bg-rose-50/40">VER REQUISITOS</button>
-                                <button onClick={() => setShowDescargasModal(true)} className="w-full py-3 bg-slate-900 rounded-xl text-sm font-bold text-white">DESCARGAR PLANILLAS</button>
                             </div>
                             <Link to="/" className="w-full flex justify-center py-3 border-2 border-slate-200 rounded-xl text-sm font-bold text-slate-700 bg-white">Volver al Inicio</Link>
                         </div>
@@ -124,29 +122,7 @@ const PreRegistro = () => {
                 </div>
             </div>
 
-            {/* Modal de Requisitos */}
-            {showRequisitosModal && (
-                <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-2xl p-6 max-w-lg w-full">
-                        <h3 className="text-xl font-bold mb-4">Requisitos</h3>
-                        <div className="max-h-60 overflow-y-auto mb-4">
-                            {requisitosFisicos.map((r, i) => <p key={i} className="mb-2">✓ {r}</p>)}
-                        </div>
-                        <button onClick={() => setShowRequisitosModal(false)} className="w-full bg-rose-900 text-white py-2 rounded-xl">Cerrar</button>
-                    </div>
-                </div>
-            )}
-
-            {/* Modal de Descarga de Planillas */}
-            {showDescargasModal && (
-                <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-2xl p-6 max-w-lg w-full">
-                        <h3 className="text-xl font-bold mb-4">Descargar Planillas</h3>
-                        <p className="text-slate-600 text-sm mb-4">Aquí podrás descargar los formatos necesarios para tu inscripción física.</p>
-                        <button onClick={() => setShowDescargasModal(false)} className="w-full bg-rose-900 text-white py-2 rounded-xl">Cerrar</button>
-                    </div>
-                </div>
-            )}
+            
         </div>
     );
 };
